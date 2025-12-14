@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: bizcontrol_db
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/bizcontrol
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bizcontrol
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - bizcontrol_network
+
+  backend:
+    build: .
+    container_name: bizcontrol_backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/bizcontrol
+    volumes:
+      - ./alembic:/app/alembic           # מפתיח את Alembic לתוך המחשב   # גם alembic.ini
+      - ./app:/app/app                   # הקוד שלך בספריית app
+    depends_on:
+      - db
+    networks:
+      - bizcontrol_network
+
+volumes:
+  postgres_data:
+
+networks:
+  bizcontrol_network:
