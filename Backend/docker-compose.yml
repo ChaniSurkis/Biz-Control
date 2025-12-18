@@ -24,6 +24,9 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/bizcontrol
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
     volumes:
       - ./alembic:/app/alembic           # מפתיח את Alembic לתוך המחשב   # גם alembic.ini
       - ./app:/app/app                   # הקוד שלך בספריית app
@@ -31,6 +34,7 @@ services:
       - db
     networks:
       - bizcontrol_network
+
 
 volumes:
   postgres_data:
